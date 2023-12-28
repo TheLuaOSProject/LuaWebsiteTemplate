@@ -1,0 +1,6 @@
+{
+    "licenser.license": "MIT",
+    "clangd.fallbackFlags": [
+        // "-std=c2x"
+    ]
+}
