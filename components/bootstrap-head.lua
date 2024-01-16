@@ -10,6 +10,7 @@ local xml = xml_gen.xml
 
 return xml_gen.component(function (args)
     local title = assert(args.title) --[[@as string]]
+    local use_luajs = args.use_luajs == nil and true or args.use_luajs --[[@as boolean]]
 
     return xml.head {
         xml.title {title};
@@ -28,5 +29,19 @@ return xml_gen.component(function (args)
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL",
             crossorigin="anonymous"
         };
+
+        function ()
+            if use_luajs then
+                coroutine.yield(xml.script {
+                    type="text/javascript",
+                    src="luajs/luajs.js"
+                })
+
+                --JS 🤮🤮🤮
+                coroutine.yield(xml.script {type="text/javascript"} [[
+                    Module.newState().then(async (L) => { await L.enableLuaScriptTags(document); });
+                ]])
+            end
+        end
     }
 end)

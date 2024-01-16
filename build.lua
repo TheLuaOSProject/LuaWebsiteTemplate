@@ -26,6 +26,8 @@ local Path = require("path-utilities")
 local cwd = Path.current_directory
 local site_dir = cwd/"site"
 local build_dir = cwd/"build"
+local luajs_dir = cwd/"LuaJS"
+local luajs_build_dir = build_dir/"luajs"
 
 local yield = coroutine.yield
 
@@ -129,6 +131,16 @@ end
 
 log.info("Site directory: ", site_dir)
 log.info("Build directory: ", build_dir)
+log.info("LuaJS directory: ", luajs_dir)
+
+if not luajs_build_dir:exists() then
+    build_dir:create_directory(true)
+    --I know this is unsafe
+    --i dont care
+    local cmd = "cd "..tostring(luajs_dir).." && npm install && npm run clean && npm run build INSTALL_DEST="..tostring(luajs_build_dir)
+    log.info("$ "..cmd)
+    assert(os.execute(cmd))
+end
 
 if file_to_compile then
     local ext = assert(file_to_compile:extension())

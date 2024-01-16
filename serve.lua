@@ -95,6 +95,17 @@ local function dohtml_require(x)
     else return require(x) end
 end
 
+---@generic TKey, TValue
+---@param x TKey
+---@return fun(cases: { [TKey]: TValue, default: TValue? }): TValue
+local function match(x)
+    return function(cases)
+        local v = cases[x]
+        if v then return v end
+        return cases.default
+    end
+end
+
 ---@param x Path
 ---@return XML.Node?, string?
 local function dohtml(x)
@@ -111,10 +122,37 @@ _G.yield = coroutine.yield
 http.createServer(function (req, res)
     local ip = tostring(req.socket:getsockname().ip)
     local path = src_dir/assert(req.url)
+    print("["..ip.."] "..req.method.." "..tostring(path))
     if path:type() == "directory" then path = path/"index.html.lua" end
     if not path:exists() then path = path:add_extension("html.lua") end
     if not path:exists() then path = path:remove_extension():add_extension("html") end
+
+    if not path:exists() then
+        path = build_dir/req.url
+        if not path:exists() then
+            path = build_dir/"luajs"/req.url --luajs.data doesn't have a subdir so this has to be done like this
+        end
+        print("["..ip.."] "..req.method.." "..tostring(path))
+    end
+
     if path:exists() then
+        local ext = assert(path:extension())
+        if ext ~= "html.lua" then
+            print("Request for non-page resource "..tostring(path).." ("..ext..")")
+            local data, err = path:read_all()
+            if data then
+                res:setHeader("Content-Type", assert(match(ext) {
+                    css = "text/css",
+                    js = "text/javascript",
+                    wasm = "application/wasm",
+                    default = "application/octet-stream"
+                }))
+                res:setHeader("Content-Length", tostring(#data))
+                res:finish(data)
+            else internal_server_error(res, err) end
+            return
+        end
+
         res:setHeader("Content-Type", "text/html")
         local page, err = dohtml(path)
         if page then
