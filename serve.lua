@@ -1,8 +1,4 @@
 #!/usr/bin/env luvit
--- Copyright (c) 2023 Amrit Bhogal
---
--- This software is released under the MIT License.
--- https://opensource.org/licenses/MIT
 
 local vernum = _VERSION:match("%d+%.%d+")
 package.path = string.format("?.lua;?/init.lua;lua_modules/share/lua/%s/?.lua;lua_modules/share/lua/%s/?/init.lua;", vernum, vernum)..package.path

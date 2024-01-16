@@ -1,21 +1,4 @@
 #!/usr/bin/env luajit
--- Copyright (C) 2023 Amrit Bhogal
---
--- This file is part of LuaWebsiteTemplate.
---
--- LuaWebsiteTemplate is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
---
--- LuaWebsiteTemplate is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with LuaWebsiteTemplate.  If not, see <http://www.gnu.org/licenses/>.
-
 local vernum = _VERSION:match("%d+%.%d+")
 package.path = string.format("?.lua;?/init.lua;lua_modules/share/lua/%s/?.lua;lua_modules/share/lua/%s/?/init.lua;", vernum, vernum)--..package.path
 package.cpath = string.format("lua_modules/lib/lua/%s/?.so;lua_modules/lib/lua/%s/?/init.so;", vernum, vernum)--..package.cpath
@@ -27,7 +10,7 @@ local cwd = Path.current_directory
 local site_dir = cwd/"site"
 local build_dir = cwd/"build"
 local luajs_dir = cwd/"LuaJS"
-local luajs_build_dir = build_dir/"luajs"
+local luajs_build_dir = build_dir--/"luajs" the `luajs.data` has to be in `build` because something something it doesn't check sub dirs
 
 local yield = coroutine.yield
 

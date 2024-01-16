@@ -12,7 +12,7 @@
         "type-check": "Error",
         "unbalanced": "Error",
         "unused": "Hint",
-        "conventions": "Error",
+        "conventions": "Error"
     },
     "diagnostics.disable": [
         "duplicate-doc-alias",
@@ -22,24 +22,20 @@
         "lua_modules/lib/lua/5.4/",
         "lua_modules/share/lua/5.4/",
         "/Users/frityet/Library/Application Support/Code/User/globalStorage/sumneko.lua/addonManager/addons/luafilesystem/module/library",
-        "/Users/frityet/Library/Application Support/Code/User/globalStorage/sumneko.lua/addonManager/addons/luvit/module/library",
+        "/Users/frityet/Library/Application Support/Code/User/globalStorage/sumneko.lua/addonManager/addons/luvit/module/library"
     ],
     "runtime.path": [
         "?.lua",
-        "?/init.lua",
+        "?/init.lua"
     ],
     "workspace.useGitIgnore": false,
     "runtime.pathStrict": true,
-    "runtime.version": "Lua 5.4",
+    "runtime.version": "LuaJIT",
     "workspace.ignoreDir": [
         ".vscode",
         ".luarocks"
     ],
-    "diagnostics.globals": [
-        "lfs"
-    ],
     "workspace.checkThirdParty": false,
-    "runtime.unicodeName": true,
     "runtime.plugin": "plugin.lua",
     "misc.parameters": [
         "--develop=true"

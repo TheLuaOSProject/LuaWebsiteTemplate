@@ -1,7 +1,3 @@
 {
     "licenser.license": "MIT",
-    "clangd.fallbackFlags": [
-        "-std=c++23",
-        "-stdlib=libc++",
-    ]
 }
