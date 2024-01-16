@@ -122,7 +122,7 @@ _G.yield = coroutine.yield
 http.createServer(function (req, res)
     local ip = tostring(req.socket:getsockname().ip)
     local path = src_dir/assert(req.url)
-    print("["..ip.."] "..req.method.." "..tostring(path))
+    print("["..ip.."] "..req.method.." "..req.url)
     if path:type() == "directory" then path = path/"index.html.lua" end
     if not path:exists() then path = path:add_extension("html.lua") end
     if not path:exists() then path = path:remove_extension():add_extension("html") end
@@ -132,13 +132,11 @@ http.createServer(function (req, res)
         if not path:exists() then
             path = build_dir/"luajs"/req.url --luajs.data doesn't have a subdir so this has to be done like this
         end
-        print("["..ip.."] "..req.method.." "..tostring(path))
     end
 
     if path:exists() then
         local ext = assert(path:extension())
         if ext ~= "html.lua" then
-            print("Request for non-page resource "..tostring(path).." ("..ext..")")
             local data, err = path:read_all()
             if data then
                 res:setHeader("Content-Type", assert(match(ext) {
