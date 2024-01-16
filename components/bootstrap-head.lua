@@ -6,6 +6,7 @@
 ---<head> with bootstrap dependencies.
 
 local xml_gen = require("xml-generator")
+local luajs = require("components.luajs")
 local xml = xml_gen.xml
 
 return xml_gen.component(function (args, kids)
@@ -29,21 +30,10 @@ return xml_gen.component(function (args, kids)
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL",
             crossorigin="anonymous"
         };
+        kids;
 
         function ()
-            if use_luajs then
-                coroutine.yield(xml.script {
-                    type="text/javascript",
-                    src="luajs/luajs.js"
-                })
-
-                --JS 🤮🤮🤮
-                coroutine.yield(xml.script {type="text/javascript"} [[
-                    Module.newState().then(async (L) => { await L.enableLuaScriptTags(document); });
-                ]])
-            end
-        end;
-
-        kids;
+            if use_luajs then coroutine.yield(luajs) end
+        end
     }
 end)
