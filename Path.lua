@@ -30,6 +30,7 @@ local seperator = is_windows and "\\" or "/"
 ---@operator sub(number): Path
 local Path = {}
 Path.__index = Path
+Path.__name = "Path"
 
 ---@param path string
 ---@param ... string
@@ -55,22 +56,24 @@ end
 
 function Path:type() return (lfs.attributes(tostring(self), "mode")) end
 
----@private
+---@param with_parents boolean?
 ---@return boolean, string?
-function Path:create_directory()
-    local path = ""
-    for _, part in ipairs(self.parts) do
-        path = path..part.."/"
-
-        local mode = lfs.attributes(path, "mode")
-        if mode == nil then
-            local ok, err = lfs.mkdir(path)
-            if not ok then return false, err end
-        elseif mode ~= "directory" then
-            return false, "Path \""..path.."\" is not a directory"
+function Path:create_directory(with_parents)
+    if with_parents then
+        local parts = {}
+        for i = 1, #self.parts do
+            table.insert(parts, self.parts[i])
+            local path = Path.new(unpack(parts))
+            if not path:exists() then
+                local ok, err = lfs.mkdir(tostring(path))
+                if not ok then return false, err end
+            end
         end
+
+        return true
+    else
+        return lfs.mkdir(tostring(self))
     end
-    return true
 end
 
 ---@overload fun(self: Path, type: "file", mode: openmode?): file*, string?
@@ -80,9 +83,6 @@ function Path:create(type, mode)
     if type == "directory" then return self:create_directory()
     elseif type == "file" then
         mode = mode or "w"
-        local ok, err = (self - 1):create_directory()
-        if not ok then return false, err end
-
         local file, err = io.open(tostring(self), mode)
         if not file then return false, err end
 
@@ -143,7 +143,7 @@ function Path:name()
     return self.parts[#self.parts]
 end
 
----@param pattern string
+---@param pattern string | fun(p: Path): boolean
 ---@return fun(): Path
 function Path:find(pattern)
     return coroutine.wrap(function ()
@@ -153,7 +153,11 @@ function Path:find(pattern)
                 if entry:type() == "directory" then
                     look_in_dir(entry)
                 elseif entry:type() == "file" then
-                    if entry:name():find(pattern) then coroutine.yield(entry) end
+                    if type(pattern) == "function" then
+                        if pattern(entry) then coroutine.yield(entry) end
+                    elseif entry:name():find(pattern) then
+                        coroutine.yield(entry)
+                    end
                 end
             end
         end
@@ -254,7 +258,7 @@ end
 function Path:parent_directory()
     local parts = {}
     for i = 1, #self.parts - 1 do table.insert(parts, self.parts[i]) end
-    return Path.new(unpack(parts) or self.parts[1])
+    return Path.new(unpack(parts))
 end
 
 --[[

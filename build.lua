@@ -1,4 +1,4 @@
-#!/usr/bin/env lua
+#!/usr/bin/env luajit
 -- Copyright (C) 2023 Amrit Bhogal
 --
 -- This file is part of LuaWebsiteTemplate.
@@ -85,20 +85,20 @@ local function compiler_for(type)
     return function(dir)
         for file in dir:find(type..".lua") do
             local fname = assert(file:relative_to(site_dir))
-            local out_file = (build_dir/fname:remove_extension()):add_extension(type)
+            -- local out_file = build_dir/assert(fname:relative_to(cwd))
+            local out_file = (build_dir/fname):remove_extension():add_extension("html")
             log.info("Compiling \x1b[34m"..tostring(file:relative_to(cwd)).."\x1b[0m to \x1b[34mbuild/"..tostring(out_file:relative_to(build_dir)).."\x1b[0m")
             yield()
             ---@type fun(): XML.Node
             local gen_fn = assert(loadfile(tostring(file), "t", setmetatable({ require = require, yield = yield }, { __index = xml_gen.xml })))
             yield()
 
-            local ok, gen = pcall(gen_fn)
-            if not ok then error(gen) end
-            if not out_file:parent_directory():exists() then assert(out_file:parent_directory():create("directory")) end
+            local gen = gen_fn()
             yield()
 
+            if not out_file:parent_directory():exists() then assert(out_file:parent_directory():create_directory(true)) end
             local f = assert(out_file:create("file", "w+b")) --[[@as file*]]
-            f:write(tostring(gen))
+            f:write(tostring(gen or ""))
             f:close()
             yield()
         end
@@ -109,12 +109,12 @@ end
 ---@return fun(dir: Path)
 local function copier_for(type)
     return function(dir)
-        for file in dir:find('.'..type) do
+        for file in dir:find(function(p) return p:extension() == type end) do
             local fname = assert(file:relative_to(site_dir))
             local out_file = build_dir/fname
             log.info("Copying \x1b[34m"..tostring(file:relative_to(cwd)).."\x1b[0m to \x1b[34mbuild/"..tostring(out_file:relative_to(build_dir)).."\x1b[0m")
             yield()
-            if not out_file:parent_directory():exists() then assert(out_file:parent_directory():create("directory")) end
+            if not out_file:parent_directory():exists() then assert(out_file:parent_directory():create_directory(true)) end
             yield()
 
             assert(file:copy_to(out_file))

@@ -19,9 +19,10 @@
         "duplicate-doc-field"
     ],
     "workspace.library": [
-        "lua_modules/lib/lua/5.1/",
-        "lua_modules/share/lua/5.1/",
+        "lua_modules/lib/lua/5.4/",
+        "lua_modules/share/lua/5.4/",
         "/Users/frityet/Library/Application Support/Code/User/globalStorage/sumneko.lua/addonManager/addons/luafilesystem/module/library",
+        "/Users/frityet/Library/Application Support/Code/User/globalStorage/sumneko.lua/addonManager/addons/luvit/module/library",
     ],
     "runtime.path": [
         "?.lua",
@@ -29,7 +30,7 @@
     ],
     "workspace.useGitIgnore": false,
     "runtime.pathStrict": true,
-    "runtime.version": "LuaJIT",
+    "runtime.version": "Lua 5.4",
     "workspace.ignoreDir": [
         ".vscode",
         ".luarocks"

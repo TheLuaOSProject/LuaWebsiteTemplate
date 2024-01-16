@@ -10,14 +10,16 @@ function OnSetText(uri, text)
     local diffs = {}
 
     local function processString(fString, startIdx)
-        -- Replace the content within curly braces
         local modifiedString = fString:gsub("%b{}", function(curlyContent)
-            local curlyInner = curlyContent:sub(2, -2) -- Extract the content inside {}.
-            return "\".." .. curlyInner .. "..\""
+            -- Extract the content inside {} without the curly braces
+            local curlyInner = curlyContent:sub(2, -2)
+
+            -- Return the concatenation sequence, ensuring proper handling of quotes
+            return "\"..(" .. curlyInner .. ")..\""
         end)
 
-        -- Remove the surrounding quotes and wrap with f(...)
-        modifiedString = "f(" .. modifiedString:sub(3, -2) .. ")"
+        -- Handle the beginning and end of the fString
+        modifiedString = "\"".. modifiedString:sub(3, -3) .."\""
 
         if modifiedString ~= fString then
             return {
@@ -28,9 +30,10 @@ function OnSetText(uri, text)
         end
     end
 
+
     -- Pattern to match f-strings.
     for startIdx, quoteChar, innerContent in text:gmatch("()f(['\"])(.-)%2()") do
-        local fString = "f" .. quoteChar .. innerContent .. quoteChar
+        local fString = "f"..quoteChar..innerContent..quoteChar
         local diff = processString(fString, startIdx)
         if diff then
             table.insert(diffs, diff)

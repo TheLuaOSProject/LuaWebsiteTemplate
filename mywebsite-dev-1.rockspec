@@ -12,7 +12,7 @@ description = {
 dependencies = {
    "lua >= 5.1",
    "luaxmlgenerator >= 1.0.0",
-   "luafilesystem"
+   "luafilesystem",
 }
 build = {
    type = "command",
