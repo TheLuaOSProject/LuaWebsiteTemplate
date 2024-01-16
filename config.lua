@@ -1,5 +1,6 @@
-return { 
+return {
   host = '127.0.0.1',
-  location = 'build',
-  port = '8080' 
+  build_directory = 'build',
+  source_directory = 'site',
+  port = '8080'
 }

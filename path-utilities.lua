@@ -79,7 +79,7 @@ end
 ---@overload fun(self: Path, type: "file", mode: openmode?): file*, string?
 ---@param type "directory"
 ---@return boolean | file*, string?
-function Path:create(type, mode)
+function Path:open(type, mode)
     if type == "directory" then return self:create_directory()
     elseif type == "file" then
         mode = mode or "w"

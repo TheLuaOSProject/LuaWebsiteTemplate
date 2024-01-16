@@ -21,7 +21,7 @@ package.path = string.format("?.lua;?/init.lua;lua_modules/share/lua/%s/?.lua;lu
 package.cpath = string.format("lua_modules/lib/lua/%s/?.so;lua_modules/lib/lua/%s/?/init.so;", vernum, vernum)--..package.cpath
 
 local xml_gen = require("xml-generator")
-local Path = require("Path")
+local Path = require("path-utilities")
 
 local cwd = Path.current_directory
 local site_dir = cwd/"site"
@@ -79,6 +79,10 @@ function log.error(...)
     io.write("\x1b[0m\n")
 end
 
+---@param x XML.Node
+---@return string
+local function html_document(x) return "<!DOCTYPE html>"..tostring(x) end
+
 ---@param type string
 ---@return fun(dir: Path)
 local function compiler_for(type)
@@ -97,8 +101,8 @@ local function compiler_for(type)
             yield()
 
             if not out_file:parent_directory():exists() then assert(out_file:parent_directory():create_directory(true)) end
-            local f = assert(out_file:create("file", "w+b")) --[[@as file*]]
-            f:write(tostring(gen or ""))
+            local f = assert(out_file:open("file", "w+b")) --[[@as file*]]
+            f:write(gen and html_document(gen) or "")
             f:close()
             yield()
         end
@@ -134,6 +138,7 @@ else
         coroutine.create(compiler_for "html"),
         coroutine.create(compiler_for "css"),
         coroutine.create(copier_for "lua"),
+        coroutine.create(copier_for "html"),
         coroutine.create(copier_for "js"),
     }
 
