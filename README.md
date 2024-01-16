@@ -13,9 +13,9 @@ Then this is the template for you! This template lets you write websites written
 - [Luarocks](https://luarocks.org/)
 - Lua >= 5.1 (recommended LuaJIT)
 - Git
-- LuaJS dependencies (for client-side lua code execution):
-    - NPM
-    - Emscripten
+- [LuaJS](https://github.com/Doridian/LuaJS) dependencies (for client-side lua code execution):
+    - [NPM](https://www.npmjs.com/)
+    - [Emscripten](https://emscripten.org/)
 
 ### Development server
 - [Luvit](https://luvit.io/)
