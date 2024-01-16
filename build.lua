@@ -137,7 +137,11 @@ if not luajs_build_dir:exists() then
     build_dir:create_directory(true)
     --I know this is unsafe
     --i dont care
-    local cmd = "cd "..tostring(luajs_dir).." && npm install && npm run clean && npm run build INSTALL_DEST="..tostring(luajs_build_dir)
+    local cmd = "git submodule update --init --recursive"
+    log.info("$ "..cmd)
+    assert(os.execute(cmd))
+
+    cmd = "cd "..tostring(luajs_dir).." && npm install && npm run clean && npm run build INSTALL_DEST="..tostring(luajs_build_dir)
     log.info("$ "..cmd)
     assert(os.execute(cmd))
 end
