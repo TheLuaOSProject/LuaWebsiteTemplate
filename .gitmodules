@@ -1,0 +1,4 @@
+
+[submodule "LuaJS"]
+	path = LuaJS
+	url = https://github.com/Doridian/LuaJS
