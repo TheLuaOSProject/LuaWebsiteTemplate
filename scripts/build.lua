@@ -1,18 +1,17 @@
-#!/usr/bin/env luajit
+#!/usr/bin/env ./lua
 local vernum = _VERSION:match("%d+%.%d+")
 package.path = string.format("?.lua;?/init.lua;lua_modules/share/lua/%s/?.lua;lua_modules/share/lua/%s/?/init.lua;", vernum, vernum)--..package.path
 package.cpath = string.format("lua_modules/lib/lua/%s/?.so;lua_modules/lib/lua/%s/?/init.so;", vernum, vernum)--..package.cpath
 
 local xml_gen = require("xml-generator")
-local Path = require("path-utilities")
+local Path = require("scripts.path-utilities")
+local log = require("scripts.log")
 
 local cwd = Path.current_directory
 local site_dir = cwd/"site"
 local build_dir = cwd/"build"
 local luajs_dir = cwd/"LuaJS"
-local luajs_build_dir = build_dir--/"luajs" the `luajs.data` has to be in `build` because something something it doesn't check sub dirs
-
-local yield = coroutine.yield
+local luajs_build_dir = build_dir/"luajs"
 
 --turn off GC, its too slow, and the OS cleans up the memory after anyways
 collectgarbage("stop")
@@ -30,39 +29,11 @@ local file_to_compile do
 end
 
 ---Type annotation stuff
----@type _G
-_G.lua = nil
-_G.yield = coroutine.yield
-
-
-local log = {}
-
-function log.info(...)
-    local time = os.date("%H:%M:%S")
-    io.write("\x1b[36m["..time.." - \x1b[32minfo\x1b[36m]\x1b[0m ")
-    for i = 1, select("#", ...) do
-        io.write(tostring(select(i, ...)))
-    end
-    io.write("\x1b[0m\n")
-end
-
-function log.warning(...)
-    local time = os.date("%H:%M:%S")
-    io.write("\x1b[36m["..time.." - \x1b[33mwarning\x1b[36m]\x1b[33m ")
-    for i = 1, select("#", ...) do
-        io.write(tostring(select(i, ...)))
-    end
-    io.write("\x1b[0m\n")
-end
-
-function log.error(...)
-    local time = os.date("%H:%M:%S")
-    io.write("\x1b[36m["..time.." - \x1b[31merror\x1b[36m]\x1b[31m ")
-    for i = 1, select("#", ...) do
-        io.write(tostring(select(i, ...)))
-    end
-    io.write("\x1b[0m\n")
-end
+---@diagnostic disable: lowercase-global
+lua = _G
+yield = coroutine.yield
+xml = xml_gen.xml
+---@diagnostic enable: lowercase-global
 
 ---@param x XML.Node
 ---@return string
@@ -79,7 +50,7 @@ local function compiler_for(type)
             log.info("Compiling \x1b[34m"..tostring(file:relative_to(cwd)).."\x1b[0m to \x1b[34mbuild/"..tostring(out_file:relative_to(build_dir)).."\x1b[0m")
             yield()
             ---@type fun(): XML.Node
-            local gen_fn = assert(loadfile(tostring(file), "t", setmetatable({ require = require, yield = yield }, { __index = xml_gen.xml })))
+            local gen_fn = assert(loadfile(tostring(file), "t", setmetatable({ require = require, yield = yield, xml = xml_gen.xml }, { __index = xml_gen.xml })))
             yield()
 
             local gen = gen_fn()
@@ -124,7 +95,7 @@ if not luajs_build_dir:exists() then
     log.info("$ "..cmd)
     assert(os.execute(cmd))
 
-    cmd = "cd "..tostring(luajs_dir).." && npm install && npm run clean && npm run build INSTALL_DEST="..tostring(luajs_build_dir)
+    cmd = "cd "..tostring(luajs_dir).." && git reset --hard && git pull origin main && npm install && npm run clean && npm run build INSTALL_DEST="..tostring(luajs_build_dir)
     log.info("$ "..cmd)
     assert(os.execute(cmd))
 end

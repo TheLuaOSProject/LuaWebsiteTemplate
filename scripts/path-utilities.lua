@@ -9,7 +9,7 @@ local seperator = is_windows and "\\" or "/"
 ---@class Path
 ---@field parts string[]
 ---@field current_directory Path
----@operator div(string|Path): Path
+---@operator div(string|Path|unknown): Path
 ---@operator sub(number): Path
 local Path = {}
 Path.__index = Path

@@ -10,11 +10,13 @@ description = {
    license = "MIT"
 }
 dependencies = {
-   "lua >= 5.1",
+   "lua 5.4",
    "luaxmlgenerator >= 1.0.0",
    "luafilesystem",
+   "penlight",
+   "pegasus"
 }
 build = {
    type = "command",
-   build_command = "./lua build.lua"
+   build_command = "./lua scripts/build.lua"
 }

@@ -22,7 +22,6 @@
         "lua_modules/lib/lua/5.4/",
         "lua_modules/share/lua/5.4/",
         "/Users/frityet/Library/Application Support/Code/User/globalStorage/sumneko.lua/addonManager/addons/luafilesystem/module/library",
-        "/Users/frityet/Library/Application Support/Code/User/globalStorage/sumneko.lua/addonManager/addons/luvit/module/library"
     ],
     "runtime.path": [
         "?.lua",
@@ -30,14 +29,14 @@
     ],
     "workspace.useGitIgnore": false,
     "runtime.pathStrict": true,
-    "runtime.version": "LuaJIT",
+    "runtime.version": "Lua 5.4",
     "workspace.ignoreDir": [
         ".vscode",
         ".luarocks"
     ],
+    "diagnostics.globals": [
+        "js",
+        "lfs"
+    ],
     "workspace.checkThirdParty": false,
-    "runtime.plugin": "plugin.lua",
-    "misc.parameters": [
-        "--develop=true"
-    ]
 }
