@@ -190,7 +190,7 @@ function Path:__tostring() return table.concat(self.parts, seperator) end
 
 function Path.temporary_directory()
     local path = os.tmpname()
-    if is_windows then path = path:sub(1, -5) end
+    if is_windows then path = path:sub(1, -5) end -- remove the last 6 characters (".tmp\n")
     return Path(path)
 end
 

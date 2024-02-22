@@ -18,13 +18,23 @@ xml = xml_gen.xml
 ---@diagnostic enable: lowercase-global
 
 local build_dir, src_dir = Path.new(config.build_directory), Path.new(config.source_directory)
-local luarocks_modules_dir = Path.new "lua_modules"/"share"/"lua"/"5.4" --has to be 5.4
-
-local header = require("components.header")
-local bootstrap = require("components.css-frameworks.bootstrap")
+-- local luarocks_modules_dir = Path.new "lua_modules"/"share"/"lua"/"5.4" --has to be 5.4
 
 local not_found = xml.html {charset="utf8"} {
-    header {title="404 Not Found", css_framework=bootstrap};
+    xml.head {
+        xml.title "404 Not Found",
+        xml.meta {name="viewport", content="width=device-width, initial-scale=1"},
+        xml_gen.style {
+            [".container"] = {
+                ["margin-top"] = "5em",
+                ["margin-bottom"] = "5em"
+            },
+
+            [".text-center"] = {
+                ["text-align"] = "center"
+            }
+        }
+    };
 
     xml.body {
         xml.section {class="container"} {
@@ -70,7 +80,7 @@ local function html_document(x) return "<!DOCTYPE html>\n"..tostring(x) end
 ---@param x string
 ---@return any, unknown
 local function dohtml_require(x)
-    if x:sub(1, #"components") == "components" then
+    if x:sub(1, #config.components_directory) == config.components_directory then
         package.loaded[x] = nil
         return require(x)
     else
@@ -97,7 +107,7 @@ local function dohtml(x)
         require = dohtml_require,
         yield = yield,
         xml_gen = xml_gen,
-        html = xml_gen.xml
+        xml = xml_gen.xml
     }, { __index = xml_gen.xml }))
     if not ok then return nil, err end
     return ok()
@@ -112,9 +122,18 @@ local function show_server_error(error, res)
     res:statusCode(500, "Internal Server Error")
 end
 
+local function defer(fn)
+    return setmetatable({}, {
+        __close = fn
+    })
+end
+
 local server = pegasus:new(config)
 
 server:start(function (req, res)
+    local _<close> = defer(function ()
+        res:close()
+    end)
     local path = src_dir/req:path()
     if path:type() == "directory" then path = path/"index.html.lua" end
     if not path:exists() then path = path:add_extension("html.lua") end
@@ -141,6 +160,7 @@ server:start(function (req, res)
                 res:addHeader("Content-Length", #data)
                 res:write(data)
             else show_server_error(err, res) end
+
             return
         end
 
@@ -154,11 +174,9 @@ server:start(function (req, res)
     else
         log.warning("404 Not Found: ", tostring(path))
         local doc = html_document(not_found)
-        res:statusCode(404, "Not Found")
+        -- res:statusCode(404, "Not Found")
         res:addHeader("Content-Type", "text/html")
         res:addHeader("Content-Length", #doc)
         res:write(doc)
     end
-
-    res:close()
 end)

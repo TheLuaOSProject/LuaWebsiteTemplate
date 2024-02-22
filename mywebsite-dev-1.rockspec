@@ -10,8 +10,8 @@ description = {
    license = "MIT"
 }
 dependencies = {
-   "lua 5.4",
-   "luaxmlgenerator >= 1.0.0",
+   "lua >= 5.1",
+   "luaxmlgenerator >= 1.1.0",
    "luafilesystem",
    "penlight",
    "pegasus"
