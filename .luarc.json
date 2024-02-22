@@ -35,8 +35,7 @@
         ".luarocks"
     ],
     "diagnostics.globals": [
-        "js",
-        "lfs"
+        "js"
     ],
     "workspace.checkThirdParty": false,
 }
