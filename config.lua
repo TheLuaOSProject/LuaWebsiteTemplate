@@ -1,5 +1,5 @@
 return {
-  host = '0.0.0.0',
+  host = 'localhost',
   build_directory = 'build',
   source_directory = 'site',
   port = '8192',

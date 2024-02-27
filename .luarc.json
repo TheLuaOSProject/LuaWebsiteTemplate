@@ -25,7 +25,9 @@
     ],
     "runtime.path": [
         "?.lua",
-        "?/init.lua"
+        "?/init.lua",
+        "site/?.lua",
+        "site/?/init.lua",
     ],
     "workspace.useGitIgnore": false,
     "runtime.pathStrict": true,

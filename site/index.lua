@@ -1,4 +1,7 @@
 local window = js.global
+
+local react = require "reactive"
+
 function window.say_hi()
-    window:alert "hi"
+    react.say_hi()
 end

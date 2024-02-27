@@ -14,7 +14,7 @@ dependencies = {
    "luaxmlgenerator >= 1.1.0",
    "luafilesystem",
    "penlight",
-   "pegasus"
+   "http"
 }
 build = {
    type = "command",
