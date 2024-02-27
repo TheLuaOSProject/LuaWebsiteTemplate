@@ -13,6 +13,16 @@
             "path": "${workspaceFolder}/?.lua;${workspaceFolder}/?/init.lua;${workspaceFolder}/lua_modules/share/lua/5.4/?.lua;${workspaceFolder}/lua_modules/share/lua/5.4/?/init.lua;",
             "cpath": "${workspaceFolder}/?.so;${workspaceFolder}/lua_modules/lib/lua/5.4/?.so;",
             "stopOnEntry": true
+        },
+        {
+            "type": "lua",
+            "luaVersion": "lua54",
+            "request": "launch",
+            "name": "Debug build",
+            "program": "${workspaceFolder}/scripts/build.lua",
+            "path": "${workspaceFolder}/?.lua;${workspaceFolder}/?/init.lua;${workspaceFolder}/lua_modules/share/lua/5.4/?.lua;${workspaceFolder}/lua_modules/share/lua/5.4/?/init.lua;",
+            "cpath": "${workspaceFolder}/?.so;${workspaceFolder}/lua_modules/lib/lua/5.4/?.so;",
+            "stopOnEntry": true
         }
     ]
 }

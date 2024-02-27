@@ -197,24 +197,19 @@ end
 function Path:copy_to(dest)
     local src = tostring(self)
     local dest = tostring(dest)
+    local src_file, err = io.open(src, "rb")
+    if not src_file then return false, err end
+    --[[ @cast src_file file* ]]
 
-    local ok = lfs.link(src, dest)
-    if not ok then
-        local src_file, err = io.open(src, "rb")
-        if not src_file then return false, err end
-        --[[ @cast src_file file* ]]
+    local dest_file, err = io.open(dest, "w+b")
+    if not dest_file then return false, err end
+    --[[ @cast dest_file file* ]]
 
-        local dest_file, err = io.open(dest, "wb")
-        if not dest_file then return false, err end
-        --[[ @cast dest_file file* ]]
+    local data = src_file:read("*a")
+    dest_file:write(data)
 
-        local data = src_file:read("*a")
-        dest_file:write(data)
-
-        src_file:close()
-        dest_file:close()
-    end
-
+    src_file:close()
+    dest_file:close()
     return true
 end
 

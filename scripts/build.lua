@@ -77,6 +77,7 @@ local function copier_for(type)
             if not out_file:parent_directory():exists() then assert(out_file:parent_directory():create_directory(true)) end
             yield()
 
+
             assert(file:copy_to(out_file))
             yield()
         end
