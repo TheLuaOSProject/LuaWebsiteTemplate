@@ -11,8 +11,8 @@ return html {charset="utf8"} {
     body {
         h1 {class="text-center"} "Your website";
         main {class="container"} {
-            p "Hello, World!";
-            button {onclick="say_hi()", class="btn btn-primary"} "Say hi";
+            p {id="msg"} "Hello, World!";
+            button {onclick="say_hi('msg')", class="btn btn-primary"} "Say hi";
         };
     };
 }

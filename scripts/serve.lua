@@ -22,7 +22,7 @@ xml = xml_gen.xml
 ---@diagnostic enable: lowercase-global
 
 local build_dir, src_dir = Path.new(config.build_directory), Path.new(config.source_directory)
--- local luarocks_modules_dir = Path.new "lua_modules"/"share"/"lua"/"5.4" --has to be 5.4
+local luarocks_modules_dir = Path.new "lua_modules"/"share"/"lua"/"5.4" --has to be 5.4
 
 local luajs_dir = Path.current_directory/"LuaJS"
 local luajs_build_dir = build_dir/"luajs"
@@ -174,6 +174,10 @@ local function handle(self, stream)
         if not path:exists() then
             path = build_dir/"luajs"/rawpath --luajs.data doesn't have a subdir so this has to be done like this
         end
+    end
+
+    if not path:exists() then
+        path = luarocks_modules_dir/rawpath
     end
 
     if path:exists() then
