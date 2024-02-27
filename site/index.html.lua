@@ -9,10 +9,9 @@ return html {charset="utf8"} {
     };
 
     body {
-        h1 {class="text-center"} "Your website";
+        h1 {class="text-center"} "Reactivity test";
         main {class="container"} {
-            p {id="msg"} "Hello, World!";
-            button {onclick="say_hi('msg')", class="btn btn-primary"} "Say hi";
+            button {onclick="increment_counter()", class="btn btn-primary", id="counter"} "0";
         };
     };
 }

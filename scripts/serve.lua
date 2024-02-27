@@ -34,7 +34,7 @@ if not luajs_build_dir:exists() then
     log.info("$ "..cmd)
     assert(os.execute(cmd))
 
-    cmd = "cd "..tostring(luajs_dir).." && npm install && npm run clean && npm run build INSTALL_DEST=../../"..tostring(luajs_build_dir)
+    cmd = "cd "..tostring(luajs_dir).." && git reset --hard && git pull --rebase && npm install && npm run clean && npm run build INSTALL_DEST=../../"..tostring(luajs_build_dir)
     log.info("$ "..cmd)
     assert(os.execute(cmd))
 end
