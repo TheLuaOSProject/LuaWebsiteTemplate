@@ -194,7 +194,6 @@ local function handle(self, stream)
                     css = "text/css",
                     js = "application/javascript",
                     mjs = "application/javascript",
-
                     wasm = "application/wasm",
                     default = "text/plain"
                 })
@@ -221,7 +220,11 @@ local function handle(self, stream)
         else show_server_error(err, res_headers, stream) end
         return
     else
-        log.info("404 Not Found: ", tostring(path))
+        local checked_str = {}
+        for _, v in ipairs {src_dir/rawpath, build_dir/rawpath, luarocks_modules_dir/rawpath, luarocks_lib_dir/rawpath} do
+            table.insert(checked_str, tostring(v))
+        end
+        log.info("404 Not Found: ", tostring(rawpath), "\nChecked: ", table.concat(checked_str, ", "))
         local doc = html_document(not_found)
         set_status(res_headers, 404)
         res_headers:append("content-type", "text/html")
