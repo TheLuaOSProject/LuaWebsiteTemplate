@@ -25,7 +25,7 @@ Run `luarocks init` and `luarocks make` to install the development files. You ca
 
 ### Development server
 
-To run the development server, first you must install luahttp by doing `./luarocks-server install http`, then run `./lua scripts/serve.lua` in the root directory. This will start a server on port 8123. You can change the port by editing [config.lua](config.lua).
+To run the development server run `./lua scripts/serve.lua` in the root directory. This will start a server on port 8123. You can change the port by editing [config.lua](config.lua).
 
 ## Writing HTML
 

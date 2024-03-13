@@ -6,7 +6,13 @@ package.cpath = string.format("lua_modules/lib/lua/%s/?.so;lua_modules/lib/lua/%
 
 -- local pegasus = require("pegasus")
 
-local HTTPServer = require("http.server")
+local ok, HTTPServer = pcall(require, "http.server")
+if not ok then
+    local cmd = "./luarocks-server install http"
+    print("Could not find http.server, installing it with: "..cmd)
+    assert(os.execute(cmd))
+    HTTPServer = require("http.server")
+end
 local HTTPHeaders = require("http.headers")
 local Path = require("scripts.path-utilities")
 local log = require("scripts.log")
