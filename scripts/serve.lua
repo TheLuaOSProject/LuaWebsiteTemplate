@@ -19,6 +19,8 @@ local log = require("scripts.log")
 local pretty = require("pl.pretty")
 local config = require("config")
 
+assert(os.execute("./luarocks-client make"))
+
 ---@param x string
 ---@return integer? index
 local function has_arg(x)
