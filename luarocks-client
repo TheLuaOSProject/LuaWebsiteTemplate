@@ -1,0 +1,15 @@
+#!/bin/sh
+
+LUAJS_LUADIR="$(pwd)/LuaJS/lua"
+
+./luarocks --project-tree="$(pwd)/web_modules/" "$@" \
+CC=emcc CXX=em++ LD=emcc CFLAGS="-O2 -s WASM -s SIDE_MODULE -s ASYNCIFY" LIBFLAG="-s WASM -s SIDE_MODULE -s ASYNCIFY" \
+AR=emar RANLIB=emranlib STRIP=emstrip \
+MAKE="emmake make" \
+LUA="$(./luarocks config lua_interpreter)" \
+LUA_DIR="$LUAJS_LUADIR" \
+LUA_INCDIR="$LUAJS_LUADIR" \
+LUA_LIBDIR="$(pwd)/build/luajs" \
+LUA_LIBDIR_FILE="luajs.wasm" \
+LIB_EXTENSION="wasm" \
+

@@ -13,6 +13,15 @@ local log = require("scripts.log")
 local pretty = require("pl.pretty")
 local config = require("config")
 
+---@param x string
+---@return integer? index
+local function has_arg(x)
+    for i, v in ipairs(arg) do
+        if v == x then return i end
+    end
+    return nil
+end
+
 ---Global so type annotations work well in the .html.lua files
 ---@diagnostic disable: lowercase-global
 lua = _G
@@ -21,12 +30,12 @@ xml_gen = require("xml-generator")
 xml = xml_gen.xml
 ---@diagnostic enable: lowercase-global
 
+local cwd = Path.current_directory
 local build_dir, src_dir = Path.new(config.build_directory), Path.new(config.source_directory)
-local luarocks_modules_dir = Path.new "lua_modules"/"share"/"lua"/"5.4" --has to be 5.4
+local luarocks_modules_dir, luarocks_lib_dir = Path.new "web_modules"/"share"/"lua"/"5.4", Path.new "web_modules"/"lib"/"lua"/"5.4" --has to be 5.4
 
 local luajs_dir = Path.current_directory/"LuaJS"
-local luajs_build_dir = build_dir/"luajs"
-if not luajs_build_dir:exists() then
+if not build_dir:exists() or has_arg("--rebuild") then
     build_dir:create_directory(true)
     --I know this is unsafe
     --i dont care
@@ -34,7 +43,7 @@ if not luajs_build_dir:exists() then
     log.info("$ "..cmd)
     assert(os.execute(cmd))
 
-    cmd = "cd "..tostring(luajs_dir).." && git reset --hard && git pull --rebase && npm install && npm run clean && npm run build INSTALL_DEST=../../"..tostring(luajs_build_dir)
+    cmd = "cd "..tostring(luajs_dir).." && git reset --hard && git pull origin main --rebase && npm install && npm run clean && npm run build INSTALL_DEST="..tostring(cwd/build_dir)
     log.info("$ "..cmd)
     assert(os.execute(cmd))
 end
@@ -149,12 +158,6 @@ local function show_server_error(error, headers, res)
     res:write_chunk(doc, true)
 end
 
-local function defer(fn)
-    return setmetatable({}, {
-        __close = fn
-    })
-end
-
 local function handle(self, stream)
     ---@type { get: fun(self: table, path: string): string? }
     local headers = assert(stream:get_headers())
@@ -171,13 +174,14 @@ local function handle(self, stream)
 
     if not path:exists() then
         path = build_dir/rawpath
-        if not path:exists() then
-            path = build_dir/"luajs"/rawpath --luajs.data doesn't have a subdir so this has to be done like this
-        end
     end
 
     if not path:exists() then
         path = luarocks_modules_dir/rawpath
+    end
+
+    if not path:exists() then
+        path = luarocks_lib_dir/rawpath
     end
 
     if path:exists() then
@@ -189,6 +193,8 @@ local function handle(self, stream)
                 res_headers:append("Content-Type", match(ext) {
                     css = "text/css",
                     js = "application/javascript",
+                    mjs = "application/javascript",
+
                     wasm = "application/wasm",
                     default = "text/plain"
                 })
@@ -242,58 +248,3 @@ do
 end
 -- Start the main server loop
 assert(server:loop())
-
--- server:start(function (req, res)
---     local _<close> =
---     defer(function ()
---         res:close()
---     end)
---     local path = src_dir/req:path()
---     if path:type() == "directory" then path = path/"index.html.lua" end
---     if not path:exists() then path = path:add_extension("html.lua") end
---     if not path:exists() then path = path:remove_extension():add_extension("html") end
-
---     if not path:exists() then
---         path = build_dir/req:path()
---         if not path:exists() then
---             path = build_dir/"luajs"/req:path() --luajs.data doesn't have a subdir so this has to be done like this
---         end
---     end
-
---     if path:exists() then
---         log.info("200 OK: ", tostring(path))
---         local ext = assert(path:extension(), "File has no extension")
---         if ext ~= "html.lua" then
---             local data, err = path:read_all()
---             if data then
---                 res:addHeader("Content-Type", match(ext) {
---                     css = "text/css",
---                     js = "application/javascript",
---                     wasm = "application/wasm",
---                     default = "text/plain"
---                 })
---                 res:addHeader("Content-Length", #data)
---                 res:write(data)
---                 res:statusCode(200, "OK")
---             else show_server_error(err, res) end
-
---             return
---         end
-
---         res:addHeader("Content-Type", "text/html")
---         local page, err = dohtml(path)
---         if page then
---             local s = html_document(page)
---             res:addHeader("Content-Length", #s)
---             res:write(s)
---         else show_server_error(err, res) end
---     else
---         log.warning("404 Not Found: ", tostring(path))
---         local doc = html_document(not_found)
---         res:addHeader("Content-Type", "text/html")
---         res:addHeader("Content-Length", #doc)
---         res:write(doc)
---         res:statusCode(404, "Not Found")
---     end
--- end)
-

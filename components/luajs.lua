@@ -3,18 +3,16 @@ local xml = xml_gen.xml
 
 return xml_gen.component(function ()
     yield(xml.script {
-        type="text/javascript",
-        src="luajs.js",
+        type="module",
+        src="./luajs.mjs",
     })
 
     --JS 🤮🤮🤮
-    yield(xml.script {type="text/javascript"} [[
-        Module.newState().then(async (L) => {
+    yield(xml.script {type="module"} [[
+        import emscriptenInit from './luajs.mjs';
+
+        (await emscriptenInit()).newState().then(async (L) => {
             await L.enableLuaScriptTags(document);
         });
-    ]])
-
-    yield(xml.script {type="text/lua"} [[
-        package.path="/?.lua;/?/init.lua;/?.lua;/?/init.lua;"..package.path
     ]])
 end)

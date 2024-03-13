@@ -14,9 +14,11 @@ dependencies = {
    "luaxmlgenerator >= 1.1.0",
    "luafilesystem",
    "penlight",
-   "http"
 }
 build = {
-   type = "command",
-   build_command = "./lua scripts/build.lua"
+   type = "builtin",
+   modules = {
+      --put C modules you wanna compile here
+      ["module"] = "module.c"
+   },
 }
