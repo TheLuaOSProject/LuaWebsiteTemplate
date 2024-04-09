@@ -19,6 +19,6 @@ build = {
    type = "builtin",
    modules = {
       --put C modules you wanna compile here
-      ["module"] = "module.c"
+      ["module"] = { "module.c"}
    },
 }

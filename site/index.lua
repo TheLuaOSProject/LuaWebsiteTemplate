@@ -1,10 +1,10 @@
-local window = js.global
-local console = js.global.console
+-- Copyright (c) 2024 Amrit Bhogal
+--
+-- This software is released under the MIT License.
+-- https://opensource.org/licenses/MIT
+
 local document = js.global.document
 
-local mod = require("module")
-
-function window.say_hi()
-    console:log("Hi!")
-    document:querySelector("h1").textContent = "Hi from lua! Here is the result of module add: "..mod.add(3, 3)
-end
+local react = require("react")
+local xml_gen = require("xml-generator")
+react.dom.inject(document:getElementById("root"), require("App"))
