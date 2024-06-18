@@ -37,7 +37,7 @@ local todo_item = react.component(function(props)
                 end
             };
             xml.div {class="flex-grow p-2"} {
-                xml.span {class=item.completed and "line-through" or nil}(item.title);
+                xml.span(item.title) {class=item.completed and "line-through" or nil};
                 xml.br;
                 xml.div {class="flex items-center"} {
                     xml.input {
@@ -55,18 +55,18 @@ local todo_item = react.component(function(props)
                     function ()
                         local current_date = os.date("%Y-%m-%d")
                         if item.due_date < current_date then
-                            yield(xml.span {class="text-red-500"} "Overdue")
+                            yield(xml.span "Overdue" {class="text-red-500"} )
                         end
                     end
                 }
             },
 
-            xml.button {
+            xml.button "Delete" {
                 onclick = function ()
                     onchange(nil)
                 end;
                 class = "p-2 bg-red-500 text-white rounded-lg"
-            } "Delete"
+            }
         }
     end
 end)
@@ -106,7 +106,7 @@ return react.component(function()
                 end
             };
 
-            xml.input {
+            xml.input "Your item here..." {
                 type = "text",
                 onkeypress = function (e)
                     if e.key == "Enter" then
