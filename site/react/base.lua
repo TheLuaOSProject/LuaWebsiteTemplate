@@ -23,6 +23,7 @@ end
 
 local queued, reaction_queue = false, {}
 
+
 ---@generic T
 ---@param value T
 ---@return (fun(): T) get, (fun(new: T | fun(a: T): T): nil) set, function[] effects
@@ -30,7 +31,7 @@ function export.create_signal(value)
     ---@type function[]
     local effects = {}
 
-    local function set(new_value)
+    local function setter(new_value)
         value = type(new_value) == "function" and new_value(value) or new_value
 
         for _, effect in ipairs(effects) do effect() end
@@ -44,14 +45,22 @@ function export.create_signal(value)
         end)
     end
 
-    local function get()
+    local function getter()
         if export.context[#export.context] then
             effects[#effects+1] = export.context[#export.context]
         end
         return value
     end
 
-    return get, set, effects
+    -- return get, set, effects
+
+    local get = setmetatable({}, {
+        __call = function() return getter() end,
+        __tostring = function() return tostring(value) end,
+        __name = "React.Signal.Getter",
+    })
+
+    return get, setter, effects
 end
 
 return export

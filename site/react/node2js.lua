@@ -15,6 +15,7 @@ local xml_gen = require("xml-generator")
 ---@field childNodes js.Element[]
 ---@field appendChild fun(self: js.Element, child: js.Element): nil
 ---@field setAttribute fun(self: js.Element, key: string, value: string): nil
+---@field removeAttribute fun(self: js.Element, key: string): nil
 ---@field addEventListener fun(self: js.Element, event: string, callback: fun()): nil
 ---@field cloneNode fun(self: js.Element, deep: boolean): js.Element
 ---@field replaceWith fun(self: js.Element, new: js.Element): nil
@@ -38,7 +39,28 @@ local function node2js(node)
                     element.style[stylek] = stylev
                 end
             else
-                element:setAttribute(k, v)
+                local val do
+                    if type(v) == "function" then
+                        val = v()
+                    elseif type(v) == "table" then
+                        local mt = getmetatable(v)
+                        if mt and mt.__tostring then val = v else val = table.concat(v, " ") end
+                    else
+                        val = v
+                    end
+                end
+
+                if type(val) == "boolean" then
+                    if val then
+                        element:setAttribute(k, "")
+                    else
+                        element:removeAttribute(k)
+                    end
+                else
+                    element:setAttribute(k, tostring(val))
+                end
+
+                -- element:setAttribute(k, type(val) == "boolean"
             end
         end
         for _, child in ipairs(children) do
@@ -48,7 +70,7 @@ local function node2js(node)
             end
         end
         return {element}
-    elseif tname == "XML.Component" then
+    elseif tname == "XML.Component" or tname == "React.Component" then
         --[[@cast node XML.Component]]
 
         ---@type js.Element
