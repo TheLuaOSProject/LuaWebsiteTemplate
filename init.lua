@@ -1,6 +1,5 @@
 #!/usr/bin/env luajit
 local log = require("server.log")
-local config = require("config")
 
 local LUAJS_PATH = "LuaJS"
 
@@ -43,11 +42,41 @@ end
 ---@return boolean
 local function file_exists(path) return os.rename(path, path) and true or false end
 
+local CONFIG_54_FMT = [[
+local working_dir = "%s"
+
+variables = {
+   AR = "emar",
+   CC = "emcc",
+   CFLAGS = "-fblocks -O2 -s WASM -s SIDE_MODULE -s ASYNCIFY",
+   CXX = "em++",
+   LD = "emcc",
+   LIBFLAG = "-s WASM -s SIDE_MODULE -s ASYNCIFY",
+   LIB_EXTENSION = "wasm",
+
+   LUA_DIR = working_dir.."/LuaJS/lua",
+   LUA_INCDIR = working_dir.."/LuaJS/lua",
+   LUA_LIBDIR = working_dir.."/LuaJS/build/luajs",
+   LUA_LIBDIR_FILE = "luajs.wasm",
+   MAKE = "emmake make",
+   RANLIB = "emranlib",
+   STRIP = "emstrip"
+}
+]]
+
 if not file_exists(LUAJS_PATH.."/build/luajs/luajs.wasm") then
     compile_luajs()
 else
     log.info "LuaJS already compiled, skipping..."
 end
+
+local f = assert(io.popen("pwd", "r"))
+local pwd = (f:read "*a"):sub(1, -2)
+f:close()
+
+f = assert(io.open(".luarocks/config-5.4.lua", "w+b"))
+f:write(CONFIG_54_FMT:format(pwd))
+f:close()
 
 exec "./web-luarocks init client --no-wrapper-scripts"
 exec "./web-luarocks make"

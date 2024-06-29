@@ -47,3 +47,5 @@ luac.out
 /.luarocks/default-lua-version.lua
 
 .DS_Store
+/lua_modules
+/.luarocks
