@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ ! -d web_modules ]; then
+    mkdir -p web_modules/lib/luarocks/rocks-5.4
+fi
+
+if [ "$1" = "make" ]; then
+    luarocks --lua-version=5.4 --project-tree="$(pwd)/web_modules" make web-dev-1.rockspec
+else
+    luarocks --lua-version=5.4 --project-tree="$(pwd)/web_modules" "$@"
+fi

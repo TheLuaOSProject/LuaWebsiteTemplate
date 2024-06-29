@@ -5,8 +5,6 @@
 
 local export = {}
 
-local pretty = require("pl.pretty")
-
 -- local l_tostring = tostring
 -- ---@param v any
 -- ---@return string
@@ -23,9 +21,18 @@ local pretty = require("pl.pretty")
 --     end
 -- end
 
+function export.success(...)
+    local time = os.date("%H:%M:%S")
+    io.write("\x1b[36m["..time.." - \x1b[32msuccess\x1b[36m]\x1b[32m ")
+    for i = 1, select("#", ...) do
+        io.write(tostring(select(i, ...)))
+    end
+    io.write("\x1b[0m\n")
+end
+
 function export.info(...)
     local time = os.date("%H:%M:%S")
-    io.write("\x1b[36m["..time.." - \x1b[32minfo\x1b[36m]\x1b[0m ")
+    io.write("\x1b[36m["..time.." - \x1b[34minfo\x1b[36m]\x1b[0m ")
     for i = 1, select("#", ...) do
         io.write(tostring(select(i, ...)))
     end

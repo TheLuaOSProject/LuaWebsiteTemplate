@@ -19,25 +19,31 @@
         "duplicate-doc-field"
     ],
     "workspace.library": [
-        "lua_modules/lib/lua/5.4/",
-        "lua_modules/share/lua/5.4/",
+        "client_modules/lib/lua/5.4/",
+        "client_modules/share/lua/5.4/",
+        "server_modules/lib/lua/5.1/",
+        "server_modules/share/lua/5.1/",
         "/Users/frityet/Library/Application Support/Code/User/globalStorage/sumneko.lua/addonManager/addons/luafilesystem/module/library",
+        "/Users/frityet/Library/Application Support/Code/User/globalStorage/sumneko.lua/addonManager/addons/penlight/module/library",
+        "${3rd}/lfs/library",
+        "/Users/frityet/Library/Application Support/Code/User/globalStorage/sumneko.lua/addonManager/addons/lapis/module/library",
     ],
     "runtime.path": [
         "?.lua",
         "?/init.lua",
-        "site/?.lua",
-        "site/?/init.lua",
+        "app/?.lua",
+        "app/?/init.lua",
     ],
     "workspace.useGitIgnore": false,
     "runtime.pathStrict": true,
-    "runtime.version": "Lua 5.4",
-    "workspace.ignoreDir": [
-        ".vscode",
-        ".luarocks"
-    ],
+    "runtime.version": "LuaJIT",
+    // "workspace.ignoreDir": [
+    //     ".vscode",
+    //     ".luarocks"
+    // ],
     "diagnostics.globals": [
-        "js"
+        "js",
+        "ngx"
     ],
     "workspace.checkThirdParty": false,
 }

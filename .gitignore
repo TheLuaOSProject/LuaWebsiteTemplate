@@ -39,10 +39,11 @@ luac.out
 *.x86_64
 *.hex
 
-/luarocks
-/lua
-/lua_modules
+/server_modules
 /web_modules
-/.luarocks
 
 /build
+/.luarocks/config-5.1.lua
+/.luarocks/default-lua-version.lua
+
+.DS_Store
